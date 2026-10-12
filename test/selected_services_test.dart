@@ -1,4 +1,5 @@
 import 'package:bookmygroom/data/mock/mock_data.dart';
+import 'package:bookmygroom/data/models/catalog_models.dart';
 import 'package:bookmygroom/features/explore/application/explore_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
