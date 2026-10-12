@@ -60,3 +60,26 @@ class Offer {
   final String subtitle;
   final String code;
 }
+
+class Service {
+  const Service({
+    required this.id,
+    required this.categoryId,
+    required this.name,
+    required this.description,
+    required this.imageUrl,
+    required this.price,
+    required this.durationMin,
+    this.exclusiveGroup,
+  });
+  final String id;
+  final String categoryId;
+  final String name;
+  final String description;
+  final String imageUrl;
+  final int price; // INR. Display only; real pricing is server-side later.
+  final int durationMin;
+
+  /// Services sharing a group can't be booked together (e.g. two haircuts).
+  final String? exclusiveGroup;
+}
