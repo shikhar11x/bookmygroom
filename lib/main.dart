@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
+import 'core/providers/app_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,5 +18,12 @@ Future<void> main() async {
   );
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(const ProviderScope(child: BookMyGroomApp()));
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      child: const BookMyGroomApp(),
+    ),
+  );
 }

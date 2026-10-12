@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../features/appointments/presentation/appointments_screen.dart';
 import '../../features/explore/presentation/explore_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/rewards/presentation/rewards_screen.dart';
+import '../providers/app_providers.dart';
 import 'app_shell.dart';
 
 abstract class AppRoutes {
+  static const onboarding = '/onboarding';
   static const home = '/home';
   static const explore = '/explore';
   static const appointments = '/appointments';
@@ -17,7 +20,6 @@ abstract class AppRoutes {
   static const profile = '/profile';
 }
 
-/// Fade-through transition used for all pages.
 CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -35,7 +37,18 @@ CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.home,
+    redirect: (context, state) {
+      final seen = ref.read(onboardingProvider);
+      final atOnboarding = state.matchedLocation == AppRoutes.onboarding;
+      if (!seen && !atOnboarding) return AppRoutes.onboarding;
+      if (seen && atOnboarding) return AppRoutes.home;
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: AppRoutes.onboarding,
+        pageBuilder: (c, s) => _fadePage(s, const OnboardingScreen()),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
         branches: [
