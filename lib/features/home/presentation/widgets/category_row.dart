@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../explore/application/explore_providers.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -8,11 +10,11 @@ import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../data/mock/mock_data.dart';
 
-class CategoryRow extends StatelessWidget {
+class CategoryRow extends ConsumerWidget {
   const CategoryRow({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final items = MockData.categories;
     return SizedBox(
@@ -25,7 +27,10 @@ class CategoryRow extends StatelessWidget {
         itemBuilder: (context, i) {
           final c = items[i];
           return PressableScale(
-            onTap: () => context.go(AppRoutes.explore),
+            onTap: () {
+              ref.read(exploreCategoryProvider.notifier).select(c.id);
+              context.go(AppRoutes.explore);
+            },
             child: SizedBox(
               width: 72,
               child: Column(

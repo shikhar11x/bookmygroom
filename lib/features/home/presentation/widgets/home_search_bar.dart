@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../explore/application/explore_providers.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 
-class HomeSearchBar extends StatefulWidget {
+class HomeSearchBar extends ConsumerStatefulWidget {
   const HomeSearchBar({super.key});
 
   @override
-  State<HomeSearchBar> createState() => _HomeSearchBarState();
+  ConsumerState<HomeSearchBar> createState() => _HomeSearchBarState();
 }
 
-class _HomeSearchBarState extends State<HomeSearchBar> {
+class _HomeSearchBarState extends ConsumerState<HomeSearchBar> {
   final _focus = FocusNode();
 
   @override
@@ -55,9 +57,10 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
         child: TextField(
           focusNode: _focus,
           textInputAction: TextInputAction.search,
-          onSubmitted: (_) {
+          onSubmitted: (value) {
             _focus.unfocus();
-            // Query is passed to Explore in Phase 3.
+            ref.read(exploreCategoryProvider.notifier).select(null);
+            ref.read(searchQueryProvider.notifier).set(value);
             context.go(AppRoutes.explore);
           },
           decoration: const InputDecoration(
