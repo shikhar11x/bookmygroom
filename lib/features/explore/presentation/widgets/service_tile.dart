@@ -18,7 +18,8 @@ class ServiceTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final selected = ref.watch(
-        selectedServicesProvider.select((ids) => ids.contains(service.id)));
+      selectedServicesProvider.select((ids) => ids.contains(service.id)),
+    );
 
     return Semantics(
       button: true,
@@ -29,16 +30,19 @@ class ServiceTile extends ConsumerWidget {
         behavior: HitTestBehavior.opaque,
         onTap: () {
           HapticFeedback.selectionClick();
-          final replaced =
-              ref.read(selectedServicesProvider.notifier).toggle(service);
+          final replaced = ref
+              .read(selectedServicesProvider.notifier)
+              .toggle(service);
           if (replaced != null) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(
-                content: Text('Replaced $replaced with ${service.name}'),
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 2),
-              ));
+              ..showSnackBar(
+                SnackBar(
+                  content: Text('Replaced $replaced with ${service.name}'),
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
           }
         },
         child: AnimatedContainer(
@@ -58,22 +62,28 @@ class ServiceTile extends ConsumerWidget {
                 width: 92,
                 height: 92,
                 child: AppNetworkImage(
-                    url: service.imageUrl, radius: AppSpacing.radiusSm + 2),
+                  url: service.imageUrl,
+                  radius: AppSpacing.radiusSm + 2,
+                ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(service.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium),
+                    Text(
+                      service.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium,
+                    ),
                     const SizedBox(height: 2),
-                    Text(service.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall),
+                    Text(
+                      service.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       '${formatPrice(service.price)}  ·  ${formatDuration(service.durationMin)}',
@@ -91,7 +101,8 @@ class ServiceTile extends ConsumerWidget {
                   shape: BoxShape.circle,
                   color: selected ? AppColors.ink : Colors.transparent,
                   border: Border.all(
-                      color: selected ? AppColors.ink : AppColors.taupeLight),
+                    color: selected ? AppColors.ink : AppColors.taupeLight,
+                  ),
                 ),
                 child: AnimatedSwitcher(
                   duration: AppSpacing.fast,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -34,10 +36,15 @@ class _ReviewSheet extends ConsumerWidget {
     return SafeArea(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.75),
+          maxHeight: MediaQuery.of(context).size.height * 0.75,
+        ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.screenPadding, 0,
-              AppSpacing.screenPadding, AppSpacing.md),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screenPadding,
+            0,
+            AppSpacing.screenPadding,
+            AppSpacing.md,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,8 +52,10 @@ class _ReviewSheet extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text('Your selection',
-                        style: theme.textTheme.headlineSmall),
+                    child: Text(
+                      'Your selection',
+                      style: theme.textTheme.headlineSmall,
+                    ),
                   ),
                   TextButton(
                     onPressed: () =>
@@ -97,9 +106,11 @@ class _ReviewSheet extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.md),
               AppButton(
-                label: 'Done',
-                variant: AppButtonVariant.secondary,
-                onPressed: () => Navigator.of(context).pop(),
+                label: 'Continue to booking',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.push(AppRoutes.booking);
+                },
               ),
             ],
           ),

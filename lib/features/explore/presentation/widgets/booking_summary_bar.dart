@@ -30,7 +30,11 @@ class BookingSummaryBar extends ConsumerWidget {
           duration: reduce ? Duration.zero : AppSpacing.fast,
           child: Container(
             margin: const EdgeInsets.fromLTRB(
-                AppSpacing.screenPadding, 0, AppSpacing.screenPadding, 12),
+              AppSpacing.screenPadding,
+              0,
+              AppSpacing.screenPadding,
+              12,
+            ),
             padding: const EdgeInsets.fromLTRB(20, 12, 12, 12),
             decoration: BoxDecoration(
               color: AppColors.charcoal,
@@ -54,14 +58,16 @@ class BookingSummaryBar extends ConsumerWidget {
                         '${summary.services.length} ${summary.services.length == 1 ? 'service' : 'services'}  ·  ${formatDuration(summary.totalDuration)}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: AppColors.taupeLight),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.taupeLight,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         formatPrice(summary.totalPrice),
-                        style: theme.textTheme.titleLarge
-                            ?.copyWith(color: AppColors.ivory),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: AppColors.ivory,
+                        ),
                       ),
                     ],
                   ),

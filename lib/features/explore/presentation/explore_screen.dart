@@ -35,8 +35,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final services = ref.watch(filteredServicesProvider);
-    final hasSelection =
-        ref.watch(selectedServicesProvider.select((s) => s.isNotEmpty));
+    final hasSelection = ref.watch(
+      selectedServicesProvider.select((s) => s.isNotEmpty),
+    );
 
     // Keep the field in sync when Home sets the query from outside.
     ref.listen<String>(searchQueryProvider, (_, next) {
@@ -52,15 +53,21 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.screenPadding,
-                      AppSpacing.md, AppSpacing.screenPadding, 0),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.screenPadding,
+                    AppSpacing.md,
+                    AppSpacing.screenPadding,
+                    0,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('EXPLORE', style: theme.textTheme.labelSmall),
                       const SizedBox(height: 4),
-                      Text('Discover services',
-                          style: theme.textTheme.headlineMedium),
+                      Text(
+                        'Discover services',
+                        style: theme.textTheme.headlineMedium,
+                      ),
                     ],
                   ),
                 ),
@@ -74,8 +81,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                         ref.read(searchQueryProvider.notifier).set(v),
                     decoration: InputDecoration(
                       hintText: 'Search services',
-                      prefixIcon: const Icon(Icons.search_rounded,
-                          color: AppColors.taupe),
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        color: AppColors.taupe,
+                      ),
                       suffixIcon: _controller.text.isEmpty
                           ? null
                           : IconButton(
@@ -143,15 +152,21 @@ class _EmptyState extends ConsumerWidget {
               width: 64,
               height: 64,
               decoration: const BoxDecoration(
-                  color: AppColors.cream, shape: BoxShape.circle),
-              child: const Icon(Icons.search_off_rounded,
-                  color: AppColors.champagneDark),
+                color: AppColors.cream,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.search_off_rounded,
+                color: AppColors.champagneDark,
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             Text('No services found', style: theme.textTheme.titleLarge),
             const SizedBox(height: 4),
-            Text('Try a different search or category.',
-                style: theme.textTheme.bodyMedium),
+            Text(
+              'Try a different search or category.',
+              style: theme.textTheme.bodyMedium,
+            ),
             TextButton(
               onPressed: () {
                 ref.read(searchQueryProvider.notifier).set('');

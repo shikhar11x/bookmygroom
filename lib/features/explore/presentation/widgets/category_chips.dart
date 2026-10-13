@@ -45,13 +45,14 @@ class CategoryChips extends ConsumerWidget {
                   color: active ? AppColors.ink : Colors.transparent,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
                   border: Border.all(
-                      color: active ? AppColors.ink : AppColors.beige),
+                    color: active ? AppColors.ink : AppColors.beige,
+                  ),
                 ),
                 child: Text(
                   label,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: active ? AppColors.ivory : AppColors.ink,
-                      ),
+                    color: active ? AppColors.ivory : AppColors.ink,
+                  ),
                 ),
               ),
             ),
