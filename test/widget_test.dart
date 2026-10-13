@@ -1,5 +1,6 @@
 import 'package:bookmygroom/app.dart';
 import 'package:bookmygroom/core/providers/app_providers.dart';
+import 'package:bookmygroom/features/auth/application/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,11 +13,15 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          currentUserProvider.overrideWithValue(
+            const AppUser(id: 'test', email: 'test@example.com', name: 'Test'),
+          ),
+        ],
         child: const BookMyGroomApp(),
       ),
     );
-    // Image shimmers loop forever, so avoid pumpAndSettle.
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(NavigationBar), findsOneWidget);

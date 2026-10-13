@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/appointments/presentation/appointments_screen.dart';
 import '../../features/appointments/presentation/pass_screen.dart';
+import '../../features/auth/application/auth_providers.dart';
+import '../../features/auth/presentation/login_screen.dart';
 import '../../features/booking/presentation/booking_screen.dart';
 import '../../features/booking/presentation/checkout_screen.dart';
 import '../../features/booking/presentation/confirmation_screen.dart';
@@ -17,15 +19,16 @@ import 'app_shell.dart';
 
 abstract class AppRoutes {
   static const onboarding = '/onboarding';
+  static const login = '/login';
   static const home = '/home';
   static const explore = '/explore';
+  static const appointments = '/appointments';
+  static const rewards = '/rewards';
+  static const profile = '/profile';
   static const booking = '/booking';
   static const checkout = '/checkout';
   static String confirmedPath(String id) => '/confirmed/$id';
   static String passPath(String id) => '/pass/$id';
-  static const appointments = '/appointments';
-  static const rewards = '/rewards';
-  static const profile = '/profile';
 }
 
 CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
@@ -43,19 +46,36 @@ CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final refresh = ValueNotifier<int>(0);
+  ref.listen(currentUserProvider, (_, _) => refresh.value++);
+  ref.listen(onboardingProvider, (_, _) => refresh.value++);
+  ref.onDispose(refresh.dispose);
+
   return GoRouter(
     initialLocation: AppRoutes.home,
+    refreshListenable: refresh,
     redirect: (context, state) {
       final seen = ref.read(onboardingProvider);
-      final atOnboarding = state.matchedLocation == AppRoutes.onboarding;
-      if (!seen && !atOnboarding) return AppRoutes.onboarding;
-      if (seen && atOnboarding) return AppRoutes.home;
+      final signedIn = ref.read(currentUserProvider) != null;
+      final loc = state.matchedLocation;
+
+      if (!seen) {
+        return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
+      }
+      if (!signedIn) return loc == AppRoutes.login ? null : AppRoutes.login;
+      if (loc == AppRoutes.login || loc == AppRoutes.onboarding) {
+        return AppRoutes.home;
+      }
       return null;
     },
     routes: [
       GoRoute(
         path: AppRoutes.onboarding,
         pageBuilder: (c, s) => _fadePage(s, const OnboardingScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        pageBuilder: (c, s) => _fadePage(s, const LoginScreen()),
       ),
       GoRoute(
         path: AppRoutes.booking,
