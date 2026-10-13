@@ -9,8 +9,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../data/mock/mock_data.dart';
 import '../../../data/models/appointment.dart';
+import '../../appointments/data/appointments_repository.dart';
 import '../../explore/application/explore_providers.dart';
 import '../../home/application/home_providers.dart';
 import '../application/booking_providers.dart';
@@ -47,6 +47,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 
   Future<void> _confirm() async {
+    if (_confirming) return;
     setState(() => _confirming = true);
     final summary = ref.read(bookingSummaryProvider);
     final slot = ref.read(bookingSlotProvider);
@@ -57,14 +58,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final price = ref.read(priceProvider);
     final coupon = ref.read(appliedCouponProvider);
     final stylistId = ref.read(bookingStylistProvider);
-    final stylist = stylistId == null
-        ? 'Any available stylist'
-        : MockData.stylists.firstWhere((s) => s.id == stylistId).name;
 
-    final appt = Appointment(
+    final draft = Appointment(
       id: 'BMG-${DateTime.now().millisecondsSinceEpoch.toRadixString(36).toUpperCase()}',
       branchName: ref.read(selectedBranchProvider).name,
-      stylistName: stylist,
+      stylistName: '', // The server assigns and returns the real stylist.
       serviceNames: [for (final s in summary.services) s.name],
       start: slot,
       durationMin: summary.totalDuration,
@@ -76,23 +74,29 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       couponCode: coupon?.code,
     );
 
-    final saved = await ref.read(appointmentsProvider.notifier).add(appt);
-    if (!mounted) return;
-    if (saved == null) {
-      setState(() => _confirming = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('You already have an appointment at this time.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
+    try {
+      final saved = await ref
+          .read(appointmentsProvider.notifier)
+          .book(draft, stylistId: stylistId);
+      if (!mounted) return;
+      HapticFeedback.mediumImpact();
+      context.go(AppRoutes.confirmedPath(saved.id));
+      ref.read(selectedServicesProvider.notifier).clear();
+      ref.read(bookingStylistProvider.notifier).select(null);
+      ref.read(appliedCouponProvider.notifier).remove();
+    } on BookingException catch (e) {
+      _fail(e.message);
+    } catch (_) {
+      _fail('Could not book. Check your connection and try again.');
     }
-    HapticFeedback.mediumImpact();
-    context.go(AppRoutes.confirmedPath(saved.id));
-    ref.read(selectedServicesProvider.notifier).clear();
-    ref.read(bookingStylistProvider.notifier).select(null);
-    ref.read(appliedCouponProvider.notifier).remove();
+  }
+
+  void _fail(String message) {
+    if (!mounted) return;
+    setState(() => _confirming = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
   }
 
   @override

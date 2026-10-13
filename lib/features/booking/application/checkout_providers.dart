@@ -2,8 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/providers/app_providers.dart';
 import '../../../data/models/appointment.dart';
+import '../../appointments/data/appointments_repository.dart';
+import '../../auth/application/auth_providers.dart';
 import '../../explore/application/explore_providers.dart';
 
 /// MOCK coupon rules. Real validation moves to the server later.
@@ -100,55 +101,36 @@ final priceProvider = Provider<PriceBreakdown>((ref) {
   return PriceBreakdown(subtotal, discount, tax);
 });
 
-const _appointmentsKey = 'appointments';
+class AppointmentsNotifier extends AsyncNotifier<List<Appointment>> {
+  AppointmentsRepository get _repo => ref.read(appointmentsRepositoryProvider);
 
-class AppointmentsNotifier extends Notifier<List<Appointment>> {
   @override
-  List<Appointment> build() {
-    final raw = ref
-        .watch(sharedPreferencesProvider)
-        .getString(_appointmentsKey);
-    if (raw == null) return [];
-    try {
-      return Appointment.decodeList(raw);
-    } catch (_) {
-      return [];
-    }
+  Future<List<Appointment>> build() async {
+    // Re-runs when the signed-in user changes, so lists never leak across users.
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return const [];
+    return _repo.fetchMine();
   }
 
-  Future<void> _save() => ref
-      .read(sharedPreferencesProvider)
-      .setString(_appointmentsKey, Appointment.encodeList(state));
-
-  /// Local check only. Real stylist double-booking checks happen on the server.
-  bool hasConflict(DateTime start, int durationMin) {
-    final end = start.add(Duration(minutes: durationMin));
-    return state.any(
-      (a) =>
-          a.status == AppointmentStatus.confirmed &&
-          start.isBefore(a.end) &&
-          end.isAfter(a.start),
-    );
-  }
-
-  Future<Appointment?> add(Appointment a) async {
-    if (hasConflict(a.start, a.durationMin)) return null;
-    state = [...state, a];
-    await _save();
-    return a;
+  Future<Appointment> book(
+    Appointment draft, {
+    required String? stylistId,
+  }) async {
+    final saved = await _repo.book(draft, stylistId: stylistId);
+    final current = state.value ?? const <Appointment>[];
+    state = AsyncData([saved, ...current.where((a) => a.id != saved.id)]);
+    return saved;
   }
 
   Future<void> cancel(String id) async {
-    state = [
-      for (final a in state)
-        if (a.id == id) a.copyWith(status: AppointmentStatus.cancelled) else a,
-    ];
-    await _save();
+    final updated = await _repo.cancel(id);
+    final current = state.value ?? const <Appointment>[];
+    state = AsyncData([for (final a in current) a.id == id ? updated : a]);
   }
 }
 
 final appointmentsProvider =
-    NotifierProvider<AppointmentsNotifier, List<Appointment>>(
+    AsyncNotifierProvider<AppointmentsNotifier, List<Appointment>>(
       AppointmentsNotifier.new,
     );
 
@@ -156,7 +138,8 @@ final appointmentByIdProvider = Provider.family<Appointment?, String>((
   ref,
   id,
 ) {
-  for (final a in ref.watch(appointmentsProvider)) {
+  final list = ref.watch(appointmentsProvider).value ?? const <Appointment>[];
+  for (final a in list) {
     if (a.id == id) return a;
   }
   return null;
