@@ -82,7 +82,29 @@ class Appointment {
     couponCode: j['couponCode'] as String?,
     status: AppointmentStatus.values.byName(j['status'] as String),
   );
+  factory Appointment.fromRow(Map<String, dynamic> r) => Appointment(
+    id: r['id'] as String,
+    branchName: r['branch_name'] as String,
+    stylistName: r['stylist_name'] as String,
+    serviceNames: List<String>.from(r['service_names'] as List),
+    start: DateTime.parse(r['start_at'] as String).toLocal(),
+    durationMin: r['duration_min'] as int,
+    subtotal: r['subtotal'] as int,
+    discount: r['discount'] as int,
+    tax: r['tax'] as int,
+    total: r['total'] as int,
+    paymentMethod: r['payment_method'] as String,
+    couponCode: r['coupon_code'] as String?,
+    status: _statusFromDb(r['status'] as String),
+  );
 
+  static AppointmentStatus _statusFromDb(String s) => switch (s) {
+    'checked_in' => AppointmentStatus.checkedIn,
+    'in_service' => AppointmentStatus.inService,
+    'completed' => AppointmentStatus.completed,
+    'cancelled' => AppointmentStatus.cancelled,
+    _ => AppointmentStatus.confirmed,
+  };
   static String encodeList(List<Appointment> list) =>
       jsonEncode(list.map((a) => a.toJson()).toList());
 
