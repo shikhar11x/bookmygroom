@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/appointments/presentation/appointments_screen.dart';
+import '../../features/booking/presentation/booking_screen.dart';
 import '../../features/explore/presentation/explore_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
@@ -15,6 +16,7 @@ abstract class AppRoutes {
   static const onboarding = '/onboarding';
   static const home = '/home';
   static const explore = '/explore';
+  static const booking = '/booking';
   static const appointments = '/appointments';
   static const rewards = '/rewards';
   static const profile = '/profile';
@@ -48,6 +50,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.onboarding,
         pageBuilder: (c, s) => _fadePage(s, const OnboardingScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.booking,
+        pageBuilder: (c, s) => _fadePage(s, const BookingScreen()),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
