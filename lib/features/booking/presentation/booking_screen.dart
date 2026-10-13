@@ -82,7 +82,9 @@ class BookingScreen extends ConsumerWidget {
             label: slot == null
                 ? 'Select a time'
                 : 'Continue  ·  ${DateFormat('h:mm a').format(slot)}',
-            onPressed: slot == null ? null : () => _showDraft(context, ref),
+            onPressed: slot == null
+                ? null
+                : () => context.push(AppRoutes.checkout),
           ),
         ),
       ),
@@ -326,75 +328,4 @@ class _SlotGrid extends ConsumerWidget {
       ),
     );
   }
-}
-
-void _showDraft(BuildContext context, WidgetRef ref) {
-  final summary = ref.read(bookingSummaryProvider);
-  final slot = ref.read(bookingSlotProvider)!;
-  final stylistId = ref.read(bookingStylistProvider);
-  final stylist = stylistId == null
-      ? 'Any available stylist'
-      : MockData.stylists.firstWhere((s) => s.id == stylistId).name;
-  final theme = Theme.of(context);
-
-  showModalBottomSheet<void>(
-    context: context,
-    builder: (_) => SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.screenPadding,
-          0,
-          AppSpacing.screenPadding,
-          AppSpacing.md,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Your appointment', style: theme.textTheme.headlineSmall),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              DateFormat('EEEE, d MMMM  ·  h:mm a').format(slot),
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(stylist, style: theme.textTheme.bodyMedium),
-            const Divider(height: 28),
-            for (final s in summary.services)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(s.name)),
-                    Text(formatPrice(s.price)),
-                  ],
-                ),
-              ),
-            const Divider(height: 28),
-            Row(
-              children: [
-                Text('Estimated total', style: theme.textTheme.bodyMedium),
-                const Spacer(),
-                Text(
-                  formatPrice(summary.totalPrice),
-                  style: theme.textTheme.titleMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Payment and confirmation arrive in the next phase.',
-              style: theme.textTheme.bodySmall,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            AppButton(
-              label: 'Close',
-              variant: AppButtonVariant.secondary,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }
