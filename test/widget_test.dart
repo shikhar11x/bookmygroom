@@ -8,20 +8,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   testWidgets('Shell shows five navigation destinations', (tester) async {
+    // Turn on reduced motion so entrance animations create no timers.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+
     SharedPreferences.setMockInitialValues({'onboarding_seen': true});
     final prefs = await SharedPreferences.getInstance();
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-          currentUserProvider.overrideWithValue(
-            const AppUser(id: 'test', email: 'test@example.com', name: 'Test'),
-          ),
-        ],
-        child: const BookMyGroomApp(),
-      ),
-    );
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        currentUserProvider.overrideWithValue(
+          const AppUser(id: 'test', email: 'test@example.com', name: 'Test'),
+        ),
+      ],
+      child: const BookMyGroomApp(),
+    ));
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(NavigationBar), findsOneWidget);
