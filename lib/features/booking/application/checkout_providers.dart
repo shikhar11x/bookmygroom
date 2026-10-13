@@ -115,8 +115,13 @@ class AppointmentsNotifier extends AsyncNotifier<List<Appointment>> {
   Future<Appointment> book(
     Appointment draft, {
     required String? stylistId,
+    required List<String> serviceIds,
   }) async {
-    final saved = await _repo.book(draft, stylistId: stylistId);
+    final saved = await _repo.book(
+      draft,
+      stylistId: stylistId,
+      serviceIds: serviceIds,
+    );
     final current = state.value ?? const <Appointment>[];
     state = AsyncData([saved, ...current.where((a) => a.id != saved.id)]);
     return saved;

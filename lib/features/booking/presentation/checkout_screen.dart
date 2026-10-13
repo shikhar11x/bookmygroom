@@ -77,7 +77,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     try {
       final saved = await ref
           .read(appointmentsProvider.notifier)
-          .book(draft, stylistId: stylistId);
+          .book(
+            draft,
+            stylistId: stylistId,
+            serviceIds: [for (final s in summary.services) s.id],
+          );
       if (!mounted) return;
       HapticFeedback.mediumImpact();
       context.go(AppRoutes.confirmedPath(saved.id));

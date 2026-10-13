@@ -19,6 +19,15 @@ String _friendly(String raw) {
     return 'You already have an appointment at this time.';
   }
   if (raw.contains('in_past')) return 'Please choose a future time.';
+  if (raw.contains('bad_coupon')) {
+    return 'This coupon is not valid for your selection.';
+  }
+  if (raw.contains('bad_services')) {
+    return 'Some selected services are not available together.';
+  }
+  if (raw.contains('bad_payment')) {
+    return 'This payment method is not available yet.';
+  }
   if (raw.contains('cancel_window')) {
     return 'Free cancellation closes 4 hours before the appointment.';
   }
@@ -39,7 +48,11 @@ class AppointmentsRepository {
     return rows.map<Appointment>(Appointment.fromRow).toList();
   }
 
-  Future<Appointment> book(Appointment a, {required String? stylistId}) async {
+  Future<Appointment> book(
+    Appointment a, {
+    required String? stylistId,
+    required List<String> serviceIds,
+  }) async {
     try {
       final row = await _db.rpc(
         'book_appointment',
@@ -47,15 +60,10 @@ class AppointmentsRepository {
           'p_id': a.id,
           'p_branch_name': a.branchName,
           'p_stylist_id': stylistId,
-          'p_service_names': a.serviceNames,
+          'p_service_ids': serviceIds,
           'p_start': a.start.toUtc().toIso8601String(),
-          'p_duration': a.durationMin,
-          'p_subtotal': a.subtotal,
-          'p_discount': a.discount,
-          'p_tax': a.tax,
-          'p_total': a.total,
-          'p_payment_method': a.paymentMethod,
           'p_coupon': a.couponCode,
+          'p_payment_method': a.paymentMethod,
         },
       );
       return Appointment.fromRow(row as Map<String, dynamic>);
