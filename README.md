@@ -25,7 +25,7 @@
 Clone the repository and install the dependencies:
 
 ```bash
-git clone [https://github.com/shikhar11x/bookmygroom](https://github.com/shikhar11x/bookmygroom)
+git clone https://github.com/shikhar11x/bookmygroom
 cd bookmygroom
 flutter pub get
 flutter run
