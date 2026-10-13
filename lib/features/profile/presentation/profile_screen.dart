@@ -39,7 +39,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final user = ref.watch(currentUserProvider);
-    final bookings = ref.watch(appointmentsProvider).length;
+    final bookings = ref.watch(appointmentsProvider).value?.length ?? 0;
     final initial = (user?.displayName.isNotEmpty ?? false)
         ? user!.displayName[0].toUpperCase()
         : '?';

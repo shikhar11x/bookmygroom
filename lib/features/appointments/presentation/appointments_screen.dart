@@ -18,7 +18,32 @@ class AppointmentsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final all = ref.watch(appointmentsProvider);
+    final async = ref.watch(appointmentsProvider);
+    if (async.isLoading && !async.hasValue) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (async.hasError && !async.hasValue) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Could not load appointments',
+                style: theme.textTheme.titleLarge,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppButton(
+                label: 'Try again',
+                expand: false,
+                onPressed: () => ref.invalidate(appointmentsProvider),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    final all = async.value ?? const <Appointment>[];
     final now = DateTime.now();
 
     final upcoming =

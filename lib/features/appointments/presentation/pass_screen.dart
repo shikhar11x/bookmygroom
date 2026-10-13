@@ -11,6 +11,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../data/models/appointment.dart';
+import '../data/appointments_repository.dart';
 import '../../booking/application/checkout_providers.dart';
 
 class PassScreen extends ConsumerWidget {
@@ -52,7 +53,17 @@ class PassScreen extends ConsumerWidget {
       ),
     );
     if (ok == true) {
-      await ref.read(appointmentsProvider.notifier).cancel(a.id);
+      try {
+        await ref.read(appointmentsProvider.notifier).cancel(a.id);
+      } on BookingException catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
