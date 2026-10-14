@@ -11,6 +11,8 @@ class StatusBadge extends StatelessWidget {
 
   (String, Color) get _style {
     switch (status) {
+      case AppointmentStatus.pendingPayment:
+        return ('Awaiting payment', AppColors.warning);
       case AppointmentStatus.confirmed:
         return ('Confirmed', AppColors.success);
       case AppointmentStatus.checkedIn:

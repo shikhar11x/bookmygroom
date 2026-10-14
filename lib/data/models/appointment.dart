@@ -1,6 +1,13 @@
 import 'dart:convert';
 
-enum AppointmentStatus { confirmed, checkedIn, inService, completed, cancelled }
+enum AppointmentStatus {
+  pendingPayment,
+  confirmed,
+  checkedIn,
+  inService,
+  completed,
+  cancelled,
+}
 
 class Appointment {
   const Appointment({
@@ -99,6 +106,7 @@ class Appointment {
   );
 
   static AppointmentStatus _statusFromDb(String s) => switch (s) {
+    'pending_payment' => AppointmentStatus.pendingPayment,
     'checked_in' => AppointmentStatus.checkedIn,
     'in_service' => AppointmentStatus.inService,
     'completed' => AppointmentStatus.completed,
