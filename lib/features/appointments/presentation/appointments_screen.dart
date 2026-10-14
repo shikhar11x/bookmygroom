@@ -50,7 +50,9 @@ class AppointmentsScreen extends ConsumerWidget {
         all
             .where(
               (a) =>
-                  a.status == AppointmentStatus.confirmed && a.end.isAfter(now),
+                  (a.status == AppointmentStatus.confirmed ||
+                      a.status == AppointmentStatus.pendingPayment) &&
+                  a.end.isAfter(now),
             )
             .toList()
           ..sort((a, b) => a.start.compareTo(b.start));
