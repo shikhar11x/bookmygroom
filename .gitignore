@@ -48,3 +48,9 @@ app.*.map.json
 .widget_preview/
 
 env.json
+
+supabase/.env.secrets
+
+supabase/.env.secrets
+
+supabase/.env.secrets
