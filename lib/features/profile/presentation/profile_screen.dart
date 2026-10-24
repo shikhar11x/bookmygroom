@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../appointments/data/qr_repository.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -38,6 +38,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isStaff = ref.watch(isStaffProvider).value ?? false;
     final user = ref.watch(currentUserProvider);
     final bookings = ref.watch(appointmentsProvider).value?.length ?? 0;
     final initial = (user?.displayName.isNotEmpty ?? false)
@@ -107,6 +108,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               onTap: () => context.go(AppRoutes.appointments),
             ),
             const Divider(),
+            if (isStaff) ...[
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.qr_code_scanner_rounded),
+                title: const Text('Reception check-in'),
+                subtitle: const Text('Scan guest passes'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.push(AppRoutes.scan),
+              ),
+              const Divider(),
+            ],
             const SizedBox(height: AppSpacing.lg),
             AppButton(
               label: 'Sign out',
