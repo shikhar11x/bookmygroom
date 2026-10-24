@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../appointments/data/qr_repository.dart';
 import '../../../core/providers/app_providers.dart';
@@ -34,6 +35,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Could not sign out. Try again.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteAccount() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete account?'),
+        content: const Text(
+          'This permanently deletes your account, bookings, reviews and points. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await Supabase.instance.client.functions.invoke('delete-account');
+      await ref.read(pushServiceProvider).unregister();
+      ref.read(onboardingProvider.notifier).reset();
+      await ref.read(authRepositoryProvider).signOut();
+    } on FunctionException catch (e) {
+      if (!mounted) return;
+      final active =
+          e.details is Map && (e.details as Map)['error'] == 'active_bookings';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            active
+                ? 'Cancel or finish your upcoming bookings first.'
+                : 'Could not delete the account. Try again.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not delete the account. Try again.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -139,6 +191,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               variant: AppButtonVariant.secondary,
               isLoading: _signingOut,
               onPressed: _signOut,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Center(
+              child: TextButton(
+                onPressed: _deleteAccount,
+                child: Text(
+                  'Delete account',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: AppColors.error,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
