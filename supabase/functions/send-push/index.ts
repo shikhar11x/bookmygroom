@@ -54,6 +54,12 @@ const fmt = (iso: string) =>
   });
 
 function messageFor(op: string, rec: any, old: any) {
+  if (op === "REMINDER") {
+    return {
+      title: "Your appointment is in about an hour",
+      body: `${fmt(rec.start_at)} with ${rec.stylist_name}. Tap to see your pass.`,
+    };
+  }
   if (op === "INSERT") {
     return rec.status === "confirmed"
       ? {
