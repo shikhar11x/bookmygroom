@@ -16,6 +16,7 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/rewards/presentation/rewards_screen.dart';
+import '../../features/reviews/presentation/review_screen.dart';
 import '../providers/app_providers.dart';
 import 'app_shell.dart';
 
@@ -31,6 +32,7 @@ abstract class AppRoutes {
   static const checkout = '/checkout';
   static const scan = '/scan';
   static const queue = '/queue';
+  static String reviewPath(String id) => '/review/$id';
   static String confirmedPath(String id) => '/confirmed/$id';
   static String passPath(String id) => '/pass/$id';
 }
@@ -100,6 +102,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.queue,
         pageBuilder: (c, s) => _fadePage(s, const QueueScreen()),
+      ),
+      GoRoute(
+        path: '/review/:id',
+        pageBuilder: (c, s) =>
+            _fadePage(s, ReviewScreen(appointmentId: s.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/confirmed/:id',

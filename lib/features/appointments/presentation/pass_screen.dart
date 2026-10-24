@@ -17,6 +17,7 @@ import '../../../data/models/appointment.dart';
 import '../data/appointments_repository.dart';
 import '../../booking/application/checkout_providers.dart';
 import '../application/live_providers.dart';
+import '../../reviews/data/reviews_repository.dart';
 
 class PassScreen extends ConsumerWidget {
   const PassScreen({super.key, required this.appointmentId});
@@ -228,6 +229,28 @@ class PassScreen extends ConsumerWidget {
                   'Show this QR at reception. Check-in opens 1 hour before your appointment.',
                   style: theme.textTheme.bodySmall,
                 ),
+                if (a.status == AppointmentStatus.completed) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final reviewed = ref.watch(reviewedProvider(a.id));
+                      return reviewed.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, _) => const SizedBox.shrink(),
+                        data: (done) => done
+                            ? Text(
+                                'Thanks for your review.',
+                                style: theme.textTheme.titleSmall,
+                              )
+                            : AppButton(
+                                label: 'Rate your visit',
+                                onPressed: () =>
+                                    context.push(AppRoutes.reviewPath(a.id)),
+                              ),
+                      );
+                    },
+                  ),
+                ],
                 if (a.status == AppointmentStatus.confirmed &&
                     a.end.isAfter(DateTime.now())) ...[
                   const SizedBox(height: AppSpacing.lg),

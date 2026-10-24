@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../../../data/mock/mock_data.dart';
+import '../../../reviews/data/reviews_repository.dart';
 import '../../application/home_providers.dart';
 
 class StylistRail extends ConsumerWidget {
@@ -15,6 +16,7 @@ class StylistRail extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final favourites = ref.watch(favouriteStylistsProvider);
+    final ratings = ref.watch(stylistRatingsProvider).value ?? const {};
     final items = MockData.stylists;
     return SizedBox(
       height: 300,
@@ -26,6 +28,10 @@ class StylistRail extends ConsumerWidget {
         itemBuilder: (context, i) {
           final s = items[i];
           final isFav = favourites.contains(s.id);
+          final r = ratings[s.id];
+          final ratingLabel = r == null
+              ? 'New  ·  ${s.experienceYears} yrs'
+              : '${r.average.toStringAsFixed(1)} (${r.count})  ·  ${s.experienceYears} yrs';
           return SizedBox(
             width: 150,
             child: Column(
@@ -99,10 +105,7 @@ class StylistRail extends ConsumerWidget {
                       color: AppColors.champagneDark,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      '${s.rating}  ·  ${s.experienceYears} yrs',
-                      style: theme.textTheme.bodySmall,
-                    ),
+                    Text(ratingLabel, style: theme.textTheme.bodySmall),
                   ],
                 ),
               ],

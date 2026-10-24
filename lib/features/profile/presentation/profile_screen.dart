@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../appointments/data/qr_repository.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/services/push_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_button.dart';
@@ -24,6 +25,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _signOut() async {
     setState(() => _signingOut = true);
     try {
+      await ref.read(pushServiceProvider).unregister();
       ref.read(onboardingProvider.notifier).reset();
       await ref.read(authRepositoryProvider).signOut();
     } catch (_) {
