@@ -13,20 +13,19 @@ void main() {
         const FakeAccessibilityFeatures(disableAnimations: true);
     addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
 
-    SharedPreferences.setMockInitialValues({'onboarding_seen': true});
+    // Mock storage, otherwise getInstance() waits forever in tests.
+    SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-          currentUserProvider.overrideWithValue(
-            const AppUser(id: 'test', email: 'test@example.com', name: 'Test'),
-          ),
-        ],
-        child: const BookMyGroomApp(),
-      ),
-    );
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        currentUserProvider.overrideWithValue(
+          const AppUser(id: 'test', email: 'test@example.com', name: 'Test'),
+        ),
+      ],
+      child: const BookMyGroomApp(),
+    ));
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(NavigationBar), findsOneWidget);
