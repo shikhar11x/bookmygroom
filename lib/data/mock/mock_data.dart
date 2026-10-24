@@ -97,6 +97,8 @@ class MockData {
       rating: 4.9,
       experienceYears: 12,
       imageUrl: _img('photo-1507003211169-0a1dd7228f2d'),
+      bio: 'Leads the studio with over a decade of precision cutting and editorial styling.',
+      specialties: const ['Precision cuts', 'Styling', 'Consultations'],
     ),
     Stylist(
       id: 's2',
@@ -105,6 +107,8 @@ class MockData {
       rating: 4.8,
       experienceYears: 9,
       imageUrl: _img('photo-1494790108377-be9c29b29330'),
+      bio: 'Known for natural, sun-lit colour and careful toning.',
+      specialties: const ['Balayage', 'Colour correction', 'Gloss treatments'],
     ),
     Stylist(
       id: 's3',
@@ -154,6 +158,13 @@ class MockData {
       price: 899,
       durationMin: 45,
       exclusiveGroup: 'haircut',
+      included: const [
+        'Consultation on shape and length',
+        'Shampoo and conditioning wash',
+        'Precision cut',
+        'Blow dry and styling',
+      ],
+      aftercare: 'Avoid washing for 24 hours if a styling product was used. Trim every 6 to 8 weeks to keep the shape.',
     ),
     Service(
       id: 'sv_blow',
@@ -194,6 +205,14 @@ class MockData {
       price: 599,
       durationMin: 30,
       exclusiveGroup: 'beard',
+      included: const [
+        'Beard shaping and trim',
+        'Hot towel',
+        'Clean razor line-up',
+        'Beard oil finish',
+      ],
+      aftercare:
+          'Skip harsh face wash for 12 hours. Use a light beard oil daily.',
     ),
     Service(
       id: 'sv_shave',
@@ -214,6 +233,13 @@ class MockData {
       price: 1799,
       durationMin: 60,
       exclusiveGroup: 'facial',
+      included: const [
+        'Skin analysis',
+        'Deep cleanse and exfoliation',
+        'Hydrating mask',
+        'Moisturiser and SPF',
+      ],
+      aftercare: 'Avoid heavy makeup and direct sun for the rest of the day. Drink plenty of water.',
     ),
     Service(
       id: 'sv_cleanup',

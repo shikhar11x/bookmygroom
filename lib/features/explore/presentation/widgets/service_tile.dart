@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
@@ -28,23 +30,7 @@ class ServiceTile extends ConsumerWidget {
           '${service.name}, ${formatPrice(service.price)}, ${formatDuration(service.durationMin)}',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () {
-          HapticFeedback.selectionClick();
-          final replaced = ref
-              .read(selectedServicesProvider.notifier)
-              .toggle(service);
-          if (replaced != null) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text('Replaced $replaced with ${service.name}'),
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-          }
-        },
+        onTap: () => context.push(AppRoutes.servicePath(service.id)),
         child: AnimatedContainer(
           duration: AppSpacing.fast,
           padding: const EdgeInsets.all(10),
@@ -93,24 +79,49 @@ class ServiceTile extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),
-              AnimatedContainer(
-                duration: AppSpacing.fast,
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: selected ? AppColors.ink : Colors.transparent,
-                  border: Border.all(
-                    color: selected ? AppColors.ink : AppColors.taupeLight,
-                  ),
-                ),
-                child: AnimatedSwitcher(
-                  duration: AppSpacing.fast,
-                  child: Icon(
-                    selected ? Icons.check_rounded : Icons.add_rounded,
-                    key: ValueKey(selected),
-                    size: 18,
-                    color: selected ? AppColors.ivory : AppColors.ink,
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  final replaced = ref
+                      .read(selectedServicesProvider.notifier)
+                      .toggle(service);
+                  if (replaced != null) {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Replaced $replaced with ${service.name}',
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: AnimatedContainer(
+                    duration: AppSpacing.fast,
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: selected ? AppColors.ink : Colors.transparent,
+                      border: Border.all(
+                        color: selected ? AppColors.ink : AppColors.taupeLight,
+                      ),
+                    ),
+                    child: AnimatedSwitcher(
+                      duration: AppSpacing.fast,
+                      child: Icon(
+                        selected ? Icons.check_rounded : Icons.add_rounded,
+                        key: ValueKey(selected),
+                        size: 18,
+                        color: selected ? AppColors.ivory : AppColors.ink,
+                      ),
+                    ),
                   ),
                 ),
               ),

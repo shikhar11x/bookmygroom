@@ -10,8 +10,10 @@ import 'widgets/hero_banner.dart';
 import 'widgets/home_header.dart';
 import 'widgets/home_search_bar.dart';
 import 'widgets/offers_rail.dart';
+import 'widgets/rebook_section.dart';
 import 'widgets/stylist_rail.dart';
 import 'widgets/treatment_rail.dart';
+import 'widgets/upcoming_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -34,6 +36,7 @@ class HomeScreen extends StatelessWidget {
               child: HomeSearchBar(),
             ),
             const SizedBox(height: 24),
+            const UpcomingCard(),
             const FadeInUp(
               delay: Duration(milliseconds: 160),
               child: HeroBanner(),
@@ -69,6 +72,7 @@ class HomeScreen extends StatelessWidget {
             const SectionHeader(eyebrow: 'For you', title: 'Exclusive offers'),
             const SizedBox(height: AppSpacing.md),
             const OffersRail(),
+            const RebookSection(),
           ],
         ),
       ),

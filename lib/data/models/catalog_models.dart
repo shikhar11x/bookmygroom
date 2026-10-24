@@ -39,6 +39,8 @@ class Stylist {
     required this.rating,
     required this.experienceYears,
     required this.imageUrl,
+    this.bio = '',
+    this.specialties = const [],
   });
   final String id;
   final String name;
@@ -46,6 +48,8 @@ class Stylist {
   final double rating;
   final int experienceYears;
   final String imageUrl;
+  final String bio;
+  final List<String> specialties;
 }
 
 class Offer {
@@ -71,15 +75,17 @@ class Service {
     required this.price,
     required this.durationMin,
     this.exclusiveGroup,
+    this.included = const [],
+    this.aftercare,
   });
   final String id;
   final String categoryId;
   final String name;
   final String description;
   final String imageUrl;
-  final int price; // INR. Display only; real pricing is server-side later.
+  final int price; // INR. Display only; real pricing is server-side.
   final int durationMin;
-
-  /// Services sharing a group can't be booked together (e.g. two haircuts).
   final String? exclusiveGroup;
+  final List<String> included;
+  final String? aftercare;
 }
