@@ -54,3 +54,5 @@ supabase/.env.secrets
 supabase/.env.secrets
 
 supabase/.env.secrets
+
+*firebase-adminsdk*.json
