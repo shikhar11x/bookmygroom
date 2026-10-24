@@ -43,7 +43,9 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     } catch (_) {
       if (mounted) {
         await _showResult(
-            success: false, message: 'Network error. Try scanning again.');
+          success: false,
+          message: 'Network error. Try scanning again.',
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -61,42 +63,57 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       isDismissible: false,
       builder: (ctx) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.screenPadding, 0,
-              AppSpacing.screenPadding, AppSpacing.md),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screenPadding,
+            0,
+            AppSpacing.screenPadding,
+            AppSpacing.md,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                Icon(
-                  success ? Icons.check_circle_rounded : Icons.error_rounded,
-                  color: success ? AppColors.success : AppColors.error,
-                  size: 32,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Text(success ? 'Checked in' : 'Check-in failed',
-                    style: theme.textTheme.headlineSmall),
-              ]),
+              Row(
+                children: [
+                  Icon(
+                    success ? Icons.check_circle_rounded : Icons.error_rounded,
+                    color: success ? AppColors.success : AppColors.error,
+                    size: 32,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(
+                    success ? 'Checked in' : 'Check-in failed',
+                    style: theme.textTheme.headlineSmall,
+                  ),
+                ],
+              ),
               const SizedBox(height: AppSpacing.sm),
               if (success && result != null) ...[
                 Text(result.customer, style: theme.textTheme.titleLarge),
                 const SizedBox(height: 4),
-                Text(DateFormat('EEE, d MMM  ·  h:mm a').format(result.start),
-                    style: theme.textTheme.bodyMedium),
-                Text('Stylist: ${result.stylist}',
-                    style: theme.textTheme.bodyMedium),
+                Text(
+                  DateFormat('EEE, d MMM  ·  h:mm a').format(result.start),
+                  style: theme.textTheme.bodyMedium,
+                ),
+                Text(
+                  'Stylist: ${result.stylist}',
+                  style: theme.textTheme.bodyMedium,
+                ),
                 const SizedBox(height: 6),
-                Text(result.services.join(', '),
-                    style: theme.textTheme.bodyMedium),
+                Text(
+                  result.services.join(', '),
+                  style: theme.textTheme.bodyMedium,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   result.dueAtSalon
                       ? 'Collect ${formatPrice(result.total)} at the salon'
                       : 'Paid online',
                   style: theme.textTheme.titleSmall?.copyWith(
-                      color: result.dueAtSalon
-                          ? AppColors.warning
-                          : AppColors.success),
+                    color: result.dueAtSalon
+                        ? AppColors.warning
+                        : AppColors.success,
+                  ),
                 ),
               ] else
                 Text(message ?? '', style: theme.textTheme.bodyMedium),
@@ -124,11 +141,13 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(ctx, ctrl.text),
-              child: const Text('Check in')),
+            onPressed: () => Navigator.pop(ctx, ctrl.text),
+            child: const Text('Check in'),
+          ),
         ],
       ),
     );

@@ -62,8 +62,10 @@ class QrRepository {
 
   Future<String> issueToken(String appointmentId) async {
     try {
-      final res = await _db.functions
-          .invoke('issue-qr-token', body: {'appointment_id': appointmentId});
+      final res = await _db.functions.invoke(
+        'issue-qr-token',
+        body: {'appointment_id': appointmentId},
+      );
       return (res.data as Map<String, dynamic>)['token'] as String;
     } on FunctionException catch (e) {
       throw QrException(_friendly(_codeOf(e)));
@@ -72,7 +74,10 @@ class QrRepository {
 
   Future<CheckInResult> checkIn(String token) async {
     try {
-      final res = await _db.functions.invoke('check-in', body: {'token': token});
+      final res = await _db.functions.invoke(
+        'check-in',
+        body: {'token': token},
+      );
       final d = res.data as Map<String, dynamic>;
       return CheckInResult(
         id: d['id'] as String,
@@ -92,9 +97,9 @@ class QrRepository {
 
 final qrRepositoryProvider = Provider<QrRepository>((ref) => QrRepository());
 
-final qrTokenProvider =
-    FutureProvider.autoDispose.family<String, String>(
-        (ref, id) => ref.read(qrRepositoryProvider).issueToken(id));
+final qrTokenProvider = FutureProvider.autoDispose.family<String, String>(
+  (ref, id) => ref.read(qrRepositoryProvider).issueToken(id),
+);
 
 /// True only for accounts listed in the staff table.
 final isStaffProvider = FutureProvider<bool>((ref) async {

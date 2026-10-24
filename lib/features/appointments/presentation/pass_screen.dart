@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
 import '../data/qr_repository.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -131,61 +132,64 @@ class PassScreen extends ConsumerWidget {
                               AppSpacing.radiusMd,
                             ),
                           ),
-                          child: Consumer(builder: (context, ref, _) {
-                            if (a.status != AppointmentStatus.confirmed) {
-                              return const SizedBox(
-                                width: 190,
-                                height: 190,
-                                child: Center(
-                                  child: Text(
-                                    'QR is available once the\nbooking is confirmed',
-                                    textAlign: TextAlign.center,
+                          child: Consumer(
+                            builder: (context, ref, _) {
+                              if (a.status != AppointmentStatus.confirmed) {
+                                return const SizedBox(
+                                  width: 190,
+                                  height: 190,
+                                  child: Center(
+                                    child: Text(
+                                      'QR is available once the\nbooking is confirmed',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
+                              final token = ref.watch(qrTokenProvider(a.id));
+                              return token.when(
+                                loading: () => const SizedBox(
+                                  width: 190,
+                                  height: 190,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                                error: (e, _) => SizedBox(
+                                  width: 190,
+                                  height: 190,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        e.toString(),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      TextButton(
+                                        onPressed: () => ref.invalidate(
+                                          qrTokenProvider(a.id),
+                                        ),
+                                        child: const Text('Try again'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                data: (t) => GestureDetector(
+                                  // Debug only: copy the code to test manual entry.
+                                  onLongPress: kDebugMode
+                                      ? () => Clipboard.setData(
+                                          ClipboardData(text: t),
+                                        )
+                                      : null,
+                                  child: QrImageView(
+                                    data: t,
+                                    size: 190,
+                                    version: QrVersions.auto,
                                   ),
                                 ),
                               );
-                            }
-                            final token = ref.watch(qrTokenProvider(a.id));
-                            return token.when(
-                              loading: () => const SizedBox(
-                                width: 190,
-                                height: 190,
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                              error: (e, _) => SizedBox(
-                                width: 190,
-                                height: 190,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      e.toString(),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          ref.invalidate(qrTokenProvider(a.id)),
-                                      child: const Text('Try again'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              data: (t) => GestureDetector(
-                                // Debug only: copy the code to test manual entry.
-                                onLongPress: kDebugMode
-                                    ? () => Clipboard.setData(
-                                          ClipboardData(text: t),
-                                        )
-                                    : null,
-                                child: QrImageView(
-                                  data: t,
-                                  size: 190,
-                                  version: QrVersions.auto,
-                                ),
-                              ),
-                            );
-                          }),
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.sm),

@@ -36,8 +36,10 @@ class PaymentRepository {
 
   Future<PaymentOrder> createOrder(String appointmentId) async {
     try {
-      final res = await _db.functions
-          .invoke('create-payment-order', body: {'appointment_id': appointmentId});
+      final res = await _db.functions.invoke(
+        'create-payment-order',
+        body: {'appointment_id': appointmentId},
+      );
       final d = res.data as Map<String, dynamic>;
       return PaymentOrder(
         d['order_id'] as String,
@@ -45,7 +47,9 @@ class PaymentRepository {
         d['key_id'] as String,
       );
     } on FunctionException catch (e) {
-      final code = (e.details is Map) ? (e.details as Map)['error'] as String? : null;
+      final code = (e.details is Map)
+          ? (e.details as Map)['error'] as String?
+          : null;
       throw PaymentException(_friendly(code));
     }
   }
@@ -57,18 +61,24 @@ class PaymentRepository {
     required String signature,
   }) async {
     try {
-      await _db.functions.invoke('verify-payment', body: {
-        'appointment_id': appointmentId,
-        'razorpay_order_id': orderId,
-        'razorpay_payment_id': paymentId,
-        'razorpay_signature': signature,
-      });
+      await _db.functions.invoke(
+        'verify-payment',
+        body: {
+          'appointment_id': appointmentId,
+          'razorpay_order_id': orderId,
+          'razorpay_payment_id': paymentId,
+          'razorpay_signature': signature,
+        },
+      );
     } on FunctionException catch (e) {
-      final code = (e.details is Map) ? (e.details as Map)['error'] as String? : null;
+      final code = (e.details is Map)
+          ? (e.details as Map)['error'] as String?
+          : null;
       throw PaymentException(_friendly(code));
     }
   }
 }
 
-final paymentRepositoryProvider =
-    Provider<PaymentRepository>((ref) => PaymentRepository());
+final paymentRepositoryProvider = Provider<PaymentRepository>(
+  (ref) => PaymentRepository(),
+);
