@@ -83,7 +83,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             AppSpacing.xl,
           ),
           children: [
-            Text('BOOKMYGROOM', style: theme.textTheme.labelSmall),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              child: Image.asset(
+                'assets/images/logo_mark.png',
+                height: 72,
+                width: 72,
+              ),
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               _isSignUp ? 'Create your\naccount' : 'Welcome\nback',
