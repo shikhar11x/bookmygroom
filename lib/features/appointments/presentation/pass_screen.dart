@@ -16,6 +16,7 @@ import '../../../core/widgets/status_badge.dart';
 import '../../../data/models/appointment.dart';
 import '../data/appointments_repository.dart';
 import '../../booking/application/checkout_providers.dart';
+import '../application/live_providers.dart';
 
 class PassScreen extends ConsumerWidget {
   const PassScreen({super.key, required this.appointmentId});
@@ -140,7 +141,7 @@ class PassScreen extends ConsumerWidget {
                                   height: 190,
                                   child: Center(
                                     child: Text(
-                                      'QR is available once the\nbooking is confirmed',
+                                      'QR is shown only for\nconfirmed bookings',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -205,6 +206,8 @@ class PassScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
+                _LiveStatus(a),
+                const SizedBox(height: AppSpacing.lg),
                 _Line('Studio', a.branchName),
                 _Line('Stylist', a.stylistName),
                 _Line('Duration', formatDuration(a.durationMin)),
@@ -261,6 +264,78 @@ class _Line extends StatelessWidget {
           Expanded(child: Text(value, style: theme.textTheme.titleSmall)),
         ],
       ),
+    );
+  }
+}
+
+class _LiveStatus extends ConsumerWidget {
+  const _LiveStatus(this.a);
+  final Appointment a;
+
+  static const _steps = [
+    (AppointmentStatus.confirmed, 'Confirmed'),
+    (AppointmentStatus.checkedIn, 'Checked in'),
+    (AppointmentStatus.inService, 'In service'),
+    (AppointmentStatus.completed, 'Completed'),
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (a.status == AppointmentStatus.cancelled ||
+        a.status == AppointmentStatus.pendingPayment) {
+      return const SizedBox.shrink();
+    }
+    final theme = Theme.of(context);
+    final current = _steps.indexWhere((s) => s.$1 == a.status);
+
+    String? queueText;
+    if (a.status == AppointmentStatus.checkedIn) {
+      final ahead = ref.watch(queueAheadProvider(a.id)).value;
+      if (ahead != null) {
+        queueText = ahead == 0
+            ? "You're next. Please stay nearby."
+            : '$ahead ${ahead == 1 ? 'guest is' : 'guests are'} ahead of you.';
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            for (var i = 0; i < _steps.length; i++)
+              Expanded(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: i <= current ? AppColors.ink : AppColors.beige,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _steps[i].$2,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: i == current ? AppColors.ink : AppColors.taupe,
+                        fontWeight: i == current
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        if (queueText != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(queueText, style: theme.textTheme.titleSmall),
+        ],
+      ],
     );
   }
 }

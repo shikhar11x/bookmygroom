@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/models/appointment.dart';
 import '../../appointments/data/appointments_repository.dart';
@@ -109,6 +110,18 @@ class AppointmentsNotifier extends AsyncNotifier<List<Appointment>> {
     // Re-runs when the signed-in user changes, so lists never leak across users.
     final user = ref.watch(currentUserProvider);
     if (user == null) return const [];
+
+    // Live updates: any change to this user's rows refreshes the list.
+    final sub = Supabase.instance.client
+        .from('appointments')
+        .stream(primaryKey: ['id'])
+        .eq('user_id', user.id)
+        .order('start_at', ascending: false)
+        .listen((rows) {
+          state = AsyncData(rows.map(Appointment.fromRow).toList());
+        });
+    ref.onDispose(sub.cancel);
+
     return _repo.fetchMine();
   }
 

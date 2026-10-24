@@ -51,7 +51,9 @@ class AppointmentsScreen extends ConsumerWidget {
             .where(
               (a) =>
                   (a.status == AppointmentStatus.confirmed ||
-                      a.status == AppointmentStatus.pendingPayment) &&
+                      a.status == AppointmentStatus.pendingPayment ||
+                      a.status == AppointmentStatus.checkedIn ||
+                      a.status == AppointmentStatus.inService) &&
                   a.end.isAfter(now),
             )
             .toList()
