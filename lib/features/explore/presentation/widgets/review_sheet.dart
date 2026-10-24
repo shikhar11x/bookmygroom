@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -106,11 +104,9 @@ class _ReviewSheet extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.md),
               AppButton(
-                label: 'Continue to booking',
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.push(AppRoutes.booking);
-                },
+                label: 'Done',
+                variant: AppButtonVariant.secondary,
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ],
           ),
