@@ -60,3 +60,5 @@ supabase/.env.secrets
 android/key.properties
 *.jks
 *.keystore
+
+backup*.sql

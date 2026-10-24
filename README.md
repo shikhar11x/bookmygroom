@@ -179,4 +179,4 @@ flutter build appbundle --release --dart-define-from-file=env.json
 - iOS release
 
 ## License
-Copyright (c) 2026 [Your name / Blazestack]. All rights reserved.
+Copyright (c) 2026 [Shikhar / Blazestack]. All rights reserved.
