@@ -119,6 +119,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onTap: () => context.push(AppRoutes.scan),
               ),
               const Divider(),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.list_alt_rounded),
+                title: const Text("Today's queue"),
+                subtitle: const Text('Start and complete services'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => context.push(AppRoutes.queue),
+              ),
+              const Divider(),
             ],
             const SizedBox(height: AppSpacing.lg),
             AppButton(

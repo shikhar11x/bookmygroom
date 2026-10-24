@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/appointments/presentation/appointments_screen.dart';
 import '../../features/appointments/presentation/pass_screen.dart';
+import '../../features/appointments/presentation/queue_screen.dart';
 import '../../features/appointments/presentation/scan_screen.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/auth/presentation/login_screen.dart';
@@ -29,6 +30,7 @@ abstract class AppRoutes {
   static const booking = '/booking';
   static const checkout = '/checkout';
   static const scan = '/scan';
+  static const queue = '/queue';
   static String confirmedPath(String id) => '/confirmed/$id';
   static String passPath(String id) => '/pass/$id';
 }
@@ -90,6 +92,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.scan,
         pageBuilder: (c, s) => _fadePage(s, const ScanScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.queue,
+        pageBuilder: (c, s) => _fadePage(s, const QueueScreen()),
       ),
       GoRoute(
         path: '/confirmed/:id',
