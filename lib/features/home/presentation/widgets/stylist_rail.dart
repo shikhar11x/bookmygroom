@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_network_image.dart';
@@ -32,83 +34,91 @@ class StylistRail extends ConsumerWidget {
           final ratingLabel = r == null
               ? 'New  ·  ${s.experienceYears} yrs'
               : '${r.average.toStringAsFixed(1)} (${r.count})  ·  ${s.experienceYears} yrs';
-          return SizedBox(
-            width: 150,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 190,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      AppNetworkImage(
-                        url: s.imageUrl,
-                        radius: AppSpacing.radiusMd,
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Semantics(
-                          button: true,
-                          label: isFav
-                              ? 'Remove ${s.name} from favourites'
-                              : 'Add ${s.name} to favourites',
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              ref
-                                  .read(favouriteStylistsProvider.notifier)
-                                  .toggle(s.id);
-                            },
-                            child: AnimatedContainer(
-                              duration: AppSpacing.fast,
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.ivory.withValues(alpha: 0.92),
-                              ),
-                              child: Icon(
-                                isFav
-                                    ? Icons.favorite_rounded
-                                    : Icons.favorite_border_rounded,
-                                size: 18,
-                                color: isFav ? AppColors.error : AppColors.ink,
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => context.push(AppRoutes.stylistPath(s.id)),
+            child: SizedBox(
+              width: 150,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 190,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        AppNetworkImage(
+                          url: s.imageUrl,
+                          radius: AppSpacing.radiusMd,
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Semantics(
+                            button: true,
+                            label: isFav
+                                ? 'Remove ${s.name} from favourites'
+                                : 'Add ${s.name} to favourites',
+                            child: GestureDetector(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                ref
+                                    .read(favouriteStylistsProvider.notifier)
+                                    .toggle(s.id);
+                              },
+                              child: AnimatedContainer(
+                                duration: AppSpacing.fast,
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.ivory.withValues(
+                                    alpha: 0.92,
+                                  ),
+                                ),
+                                child: Icon(
+                                  isFav
+                                      ? Icons.favorite_rounded
+                                      : Icons.favorite_border_rounded,
+                                  size: 18,
+                                  color: isFav
+                                      ? AppColors.error
+                                      : AppColors.ink,
+                                ),
                               ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    s.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  Text(
+                    s.role,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star_rounded,
+                        size: 16,
+                        color: AppColors.champagneDark,
                       ),
+                      const SizedBox(width: 4),
+                      Text(ratingLabel, style: theme.textTheme.bodySmall),
                     ],
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  s.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleMedium,
-                ),
-                Text(
-                  s.role,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall,
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.star_rounded,
-                      size: 16,
-                      color: AppColors.champagneDark,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(ratingLabel, style: theme.textTheme.bodySmall),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

@@ -12,7 +12,9 @@ import '../../features/booking/presentation/booking_screen.dart';
 import '../../features/booking/presentation/checkout_screen.dart';
 import '../../features/booking/presentation/confirmation_screen.dart';
 import '../../features/explore/presentation/explore_screen.dart';
+import '../../features/explore/presentation/service_detail_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/home/presentation/stylist_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/rewards/presentation/rewards_screen.dart';
@@ -33,6 +35,8 @@ abstract class AppRoutes {
   static const scan = '/scan';
   static const queue = '/queue';
   static String reviewPath(String id) => '/review/$id';
+  static String servicePath(String id) => '/service/$id';
+  static String stylistPath(String id) => '/stylist/$id';
   static String confirmedPath(String id) => '/confirmed/$id';
   static String passPath(String id) => '/pass/$id';
 }
@@ -107,6 +111,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/review/:id',
         pageBuilder: (c, s) =>
             _fadePage(s, ReviewScreen(appointmentId: s.pathParameters['id']!)),
+      ),
+      GoRoute(
+        path: '/service/:id',
+        pageBuilder: (c, s) => _fadePage(
+          s,
+          ServiceDetailScreen(serviceId: s.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/stylist/:id',
+        pageBuilder: (c, s) =>
+            _fadePage(s, StylistScreen(stylistId: s.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/confirmed/:id',
