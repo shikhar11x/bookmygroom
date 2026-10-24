@@ -59,18 +59,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: AppRoutes.home,
     refreshListenable: refresh,
     redirect: (context, state) {
-      final seen = ref.read(onboardingProvider);
       final signedIn = ref.read(currentUserProvider) != null;
+      final seen = ref.read(onboardingProvider);
       final loc = state.matchedLocation;
 
+      if (signedIn) {
+        if (loc == AppRoutes.login || loc == AppRoutes.onboarding) {
+          return AppRoutes.home;
+        }
+        return null;
+      }
+
+      // Signed out: intro first, then login.
       if (!seen) {
         return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
       }
-      if (!signedIn) return loc == AppRoutes.login ? null : AppRoutes.login;
-      if (loc == AppRoutes.login || loc == AppRoutes.onboarding) {
-        return AppRoutes.home;
-      }
-      return null;
+      return loc == AppRoutes.login ? null : AppRoutes.login;
     },
     routes: [
       GoRoute(

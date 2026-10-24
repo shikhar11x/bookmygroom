@@ -6,17 +6,16 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
   (ref) => throw UnimplementedError('Override in main()'),
 );
 
-const _onboardingKey = 'onboarding_seen';
-
+/// True once the user has finished the intro screens in this app session.
+/// Memory only, so the intro shows again on every fresh app start while
+/// signed out. Signed-in users never see it (the router checks that).
 class OnboardingNotifier extends Notifier<bool> {
   @override
-  bool build() =>
-      ref.watch(sharedPreferencesProvider).getBool(_onboardingKey) ?? false;
+  bool build() => false;
 
-  Future<void> complete() async {
-    await ref.read(sharedPreferencesProvider).setBool(_onboardingKey, true);
-    state = true;
-  }
+  void complete() => state = true;
+
+  void reset() => state = false;
 }
 
 final onboardingProvider = NotifierProvider<OnboardingNotifier, bool>(
